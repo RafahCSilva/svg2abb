@@ -9,18 +9,16 @@ body {
   padding-top : 70px;
 }
 
-.container {
+.container2 {
   height        : 100%;
   margin-bottom : -70px
 }
 
-#preABB {
+#preOUT {
   height     : calc(100vh - 70px - 15px - 50px);
-  position   : absolute;
-  width      : 95%;
+  width      : 100%;
   top        : 0;
   bottom     : 0;
   right      : 0;
-  margin     : 0 15px 0 0;
   overflow-y : scroll;
 }
