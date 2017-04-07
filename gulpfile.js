@@ -93,15 +93,15 @@ gulp.task( name.svg, function () {
 
 gulp.task( name.js_vendor, function () {
   gulp.src( input.js_vendor )
-      //.pipe( uglify( { output: { prettify: false } } ) )
       .pipe( concat( output.js_vendor ) )
+      //.pipe( uglify( { output: { prettify: false } } ) )
       .pipe( gulp.dest( output.public_js ) );
 } );
 
 gulp.task( name.js, function () {
   gulp.src( input.js )
-      //.pipe( uglify( { compress: { unused: false } } ) )
       .pipe( concat( output.js ) )
+      //.pipe( uglify( { compress: { unused: false } } ) )
       .pipe( gulp.dest( output.public_js ) );
   
 } );

@@ -1,18 +1,20 @@
 /**
- *
+ * App launch.
  *
  * Created by RafahCSilva.
  */
-
-preOUT.clear();
-
-function btn_svg2abb_click() {
-  var xmlDoc = getSvgFromFile();
-  
-  var title = xmlDoc.getElementsByTagName( "title" )[ 0 ].childNodes[ 0 ].textContent;
-  preOUT.println( title );
-}
-
 $( function () {
-  $( '#btn_svg2abb' ).on( 'click', btn_svg2abb_click );
+  $( '#btn_svg2abb' ).on( 'click', function () {
+    var xmlDoc = getSvgFromFile();
+    
+    var image = PARSE( xmlDoc );
+    
+    // Papel Sulfite A2 420 mm x 594 mm
+    var paperA2 = {
+      height: 420,
+      width: 594,
+    };
+    
+    DRAW( image, paperA2 );
+  } );
 } );
