@@ -12,6 +12,8 @@
 var SCALE = {
   ratioW: 1,
   ratioH: 1,
+  Wmm: 0,
+  Hmm: 0,
   /**
    * Set the calc Ratio to fill image in paper.
    *
@@ -21,6 +23,8 @@ var SCALE = {
    * @param Hmm (paper height in mm)
    */
   setRatio: function ( Wpx, Hpx, Wmm, Hmm ) {
+    this.Wmm    = Wmm;
+    this.Hmm    = Hmm;
     this.ratioW = Wmm / Wpx;  // (mm / px) * px = mm
     this.ratioH = Hmm / Hpx;
   },
@@ -31,7 +35,8 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmX: function ( Xpx ) {
-    return Math.round( this.ratioW * Xpx );
+    // return Math.round( this.ratioW * Xpx );
+    return Math.round( this.Wmm - this.ratioW * Xpx );
   },
   /**
    * Scale transforme in Y axis.
@@ -40,7 +45,8 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmY: function ( Ypx ) {
-    return Math.round( this.ratioH * Ypx );
+    // return Math.round( this.ratioH * Ypx );
+    return Math.round( this.Hmm - this.ratioH * Ypx );
   },
 };
 
@@ -74,7 +80,7 @@ var ABB = {
     preOUT.println( '  CONST robtarget p10:=[[759.02,-6.69,1122.48],[0.0668118,-0.0527993,0.994832,-0.0552913],[0,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
     preOUT.println( '  PROC main()' );
     
-    this.UP( 0, 0 );
+    preOUT.println( '    MoveL Offs( p10, 0, 0, ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code of program footer.
@@ -84,6 +90,18 @@ var ABB = {
     preOUT.println( 'ENDMODULE' );
   },
   /**
+   * Go at position upper.
+   *
+   * @param x (in mm)
+   * @param y (in mm)
+   * @constructor
+   */
+  GO: function ( x, y ) {
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+  },
+  /**
    * Print Code for lower a tool of paper.
    *
    * @param x (in mm)
@@ -91,8 +109,9 @@ var ABB = {
    * @constructor
    */
   DOWN: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code for lift a tool of paper.
@@ -101,7 +120,9 @@ var ABB = {
    * @param y (in mm)
    */
   UP: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code for move tool of paper.
@@ -110,7 +131,9 @@ var ABB = {
    * @param y (in mm)
    */
   MOVE: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
 };
 

@@ -31,14 +31,14 @@ function LINE( doc ) {
    * Draw Line in Rapid Code.
    */
   this.draw = function () {
-    // scaling
-    var s_x1 = SCALE.px2mmX( this.x1 );
-    var s_y1 = SCALE.px2mmY( this.y1 );
-    var s_x2 = SCALE.px2mmX( this.x2 );
-    var s_y2 = SCALE.px2mmY( this.y2 );
+    var s_x1 = parseFloat( this.x1 );
+    var s_y1 = parseFloat( this.y1 );
+    var s_x2 = parseFloat( this.x2 );
+    var s_y2 = parseFloat( this.y2 );
     preOUT.println( '    ! line (' + s_x1 + ',' + s_y2 + ')->(' + s_x2 + ',' + s_y2 + ')' );
     
     // go to point and down
+    ABB.GO( s_x1, s_y1 );
     ABB.DOWN( s_x1, s_y1 );
     // Scribble
     ABB.MOVE( s_x2, s_y2 );
@@ -49,16 +49,100 @@ function LINE( doc ) {
 
 /**
  * Element Path.
- * @param doc
+ * https://www.w3.org/TR/SVG/paths.html
+ *
+ * @param doc (xml element)
  * @constructor
  */
 function PATH( doc ) {
   this.d = doc.getAttribute( 'd' );
+  this.vet = this.d
+    .replace( /(,)/g, ' ' )
+    .replace( /(m)/g, ' m ' )
+    .replace( /(c)/g, ' c ' )
+    .replace( /(l)/g, ' l ' )
+    .replace( /(z)/g, ' z ' )
+    .replace( /(\s+)/g, ' ' )
+    .trim()
+    .split( ' ' );
+  
   /**
    * Draw path in Rapid Code.
    */
   this.draw = function () {
     preOUT.println( '    ! path' );
+    var i        = 0,
+        x0       = 0,
+        y0       = 0,
+        lastX    = 0,
+        lastY    = 0,
+        firstObj = true;
+    while ( i < this.vet.length ) {
+      switch ( this.vet[ i ] ) {
+        case 'm': // moveto
+          console.log( 'm' );
+          preOUT.println( '    ! m' );
+          x0 = parseFloat( this.vet[ ++i ] );
+          y0 = parseFloat( this.vet[ ++i ] );
+          i++;
+          lastX = x0;
+          lastY = y0;
+          break;
+          
+          
+        case 'l': // lineTo relative
+          console.log( 'l' );
+          preOUT.println( '    ! l' );
+          var x = parseFloat( this.vet[ ++i ] ),
+              y = parseFloat( this.vet[ ++i ] );
+          if ( firstObj ) {
+            console.log( 'firstObj', firstObj );
+            firstObj = false;
+            ABB.GO( x0, y0 );
+            ABB.DOWN( x0, y0 );
+          }
+          ABB.MOVE( x0 + x, y0 + y );
+          lastX = x;
+          lastY = y;
+          i++;
+          break;
+          
+          
+        case 'c': // curve relative
+          console.log( 'c' );
+          preOUT.println( '    ! c' );
+          var x1 = parseFloat( this.vet[ ++i ] ),
+              y1 = parseFloat( this.vet[ ++i ] ),
+              x2 = parseFloat( this.vet[ ++i ] ),
+              y2 = parseFloat( this.vet[ ++i ] ),
+              x3 = parseFloat( this.vet[ ++i ] ),
+              y3 = parseFloat( this.vet[ ++i ] );
+          preOUT.println( '    ! ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 );
+          lastX = x3;
+          lastY = y3;
+          if ( firstObj ) {
+            firstObj = false;
+            ABB.GO( x0, y0 );
+            ABB.DOWN( x0, y0 );
+          }
+          // line no lugar da curva
+          ABB.MOVE( x0 + x3, y0 + y3 );
+          i++;
+          break;
+        
+        
+        case 'z': // closePath
+          console.log( 'z' );
+          preOUT.println( '    ! z' );
+          ABB.UP( x0 + lastX, y0 + lastY );
+          i++;
+          break;
+        default:
+          console.log( 'default:', this.vet[ i ] );
+          i++;
+          break
+      }
+    }
   };
 }
 

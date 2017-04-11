@@ -106,7 +106,7 @@ gulp.task( name.js, function () {
   
 } );
 
-gulp.task( name.default, [ name.html, name.css_vendor, name.css, name.fonts, name.js_vendor, name.js ] );
+gulp.task( name.default, [ name.html, name.css_vendor, name.css, name.fonts, name.svg, name.js_vendor, name.js ] );
 
 gulp.task( name.watch, function () {
   gulp.watch( input.html, [ name.html ] );
