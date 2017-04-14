@@ -11,8 +11,8 @@ $( function () {
     
     // Papel Sulfite A2 420 mm x 594 mm
     var paperA2 = {
-      height: 420,
-      width: 594,
+      height: 100,
+      width: 150,
     };
     
     DRAW( image, paperA2 );

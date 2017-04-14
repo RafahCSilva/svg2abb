@@ -55,13 +55,18 @@ function LINE( doc ) {
  * @constructor
  */
 function PATH( doc ) {
-  this.d = doc.getAttribute( 'd' );
-  this.vet = this.d
+  this.d   = doc.getAttribute( 'd' );
+  this.vet = this
+    .d
     .replace( /(,)/g, ' ' )
     .replace( /(m)/g, ' m ' )
+    .replace( /(M)/g, ' M ' )
     .replace( /(c)/g, ' c ' )
+    .replace( /(C)/g, ' C ' )
     .replace( /(l)/g, ' l ' )
+    .replace( /(L)/g, ' L ' )
     .replace( /(z)/g, ' z ' )
+    .replace( /(Z)/g, ' Z ' )
     .replace( /(\s+)/g, ' ' )
     .trim()
     .split( ' ' );
@@ -80,18 +85,17 @@ function PATH( doc ) {
     while ( i < this.vet.length ) {
       switch ( this.vet[ i ] ) {
         case 'm': // moveto
-          console.log( 'm' );
           preOUT.println( '    ! m' );
           x0 = parseFloat( this.vet[ ++i ] );
           y0 = parseFloat( this.vet[ ++i ] );
           i++;
           lastX = x0;
           lastY = y0;
+          //console.log( 'm', x0, y0 );
           break;
-          
-          
+        
+        
         case 'l': // lineTo relative
-          console.log( 'l' );
           preOUT.println( '    ! l' );
           var x = parseFloat( this.vet[ ++i ] ),
               y = parseFloat( this.vet[ ++i ] );
@@ -101,41 +105,42 @@ function PATH( doc ) {
             ABB.GO( x0, y0 );
             ABB.DOWN( x0, y0 );
           }
-          ABB.MOVE( x0 + x, y0 + y );
-          lastX = x;
-          lastY = y;
+          lastX += x;
+          lastY += y;
+          ABB.MOVE( lastX, lastY );
           i++;
+          //console.log( 'l', lastX, lastY );
           break;
-          
-          
+        
+        
         case 'c': // curve relative
-          console.log( 'c' );
-          preOUT.println( '    ! c' );
           var x1 = parseFloat( this.vet[ ++i ] ),
               y1 = parseFloat( this.vet[ ++i ] ),
               x2 = parseFloat( this.vet[ ++i ] ),
               y2 = parseFloat( this.vet[ ++i ] ),
               x3 = parseFloat( this.vet[ ++i ] ),
               y3 = parseFloat( this.vet[ ++i ] );
-          preOUT.println( '    ! ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 );
-          lastX = x3;
-          lastY = y3;
+          preOUT.println( '    ! c (' + x1 + ' ' + y1 + ') (' + x2 + ' ' + y2 + ') (' + x3 + ' ' + y3 + ')' );
           if ( firstObj ) {
             firstObj = false;
             ABB.GO( x0, y0 );
             ABB.DOWN( x0, y0 );
           }
           // line no lugar da curva
-          ABB.MOVE( x0 + x3, y0 + y3 );
+          lastX += x3;
+          lastY += y3;
+          ABB.MOVE( lastX, lastY );
           i++;
+          console.log( 'c', lastX, lastY );
           break;
         
         
         case 'z': // closePath
-          console.log( 'z' );
           preOUT.println( '    ! z' );
-          ABB.UP( x0 + lastX, y0 + lastY );
+          ABB.MOVE( x0, y0 );
+          ABB.UP( x0, y0 );
           i++;
+          console.log( 'z', x0, y0 );
           break;
         default:
           console.log( 'default:', this.vet[ i ] );

@@ -35,8 +35,8 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmX: function ( Xpx ) {
-    // return Math.round( this.ratioW * Xpx );
-    return Math.round( this.Wmm - this.ratioW * Xpx );
+     return Math.round( this.ratioW * Xpx );
+    //return Math.round( this.Wmm - this.ratioW * Xpx );
   },
   /**
    * Scale transforme in Y axis.
@@ -45,8 +45,8 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmY: function ( Ypx ) {
-    // return Math.round( this.ratioH * Ypx );
-    return Math.round( this.Hmm - this.ratioH * Ypx );
+     return Math.round( this.ratioH * Ypx );
+    //return Math.round( this.Hmm - this.ratioH * Ypx );
   },
 };
 
