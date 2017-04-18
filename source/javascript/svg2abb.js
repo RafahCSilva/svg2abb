@@ -35,7 +35,7 @@ function LINE( doc ) {
     var s_y1 = parseFloat( this.y1 );
     var s_x2 = parseFloat( this.x2 );
     var s_y2 = parseFloat( this.y2 );
-    preOUT.println( '    ! line (' + s_x1 + ',' + s_y2 + ')->(' + s_x2 + ',' + s_y2 + ')' );
+    ABB.COMMENT( 'line (' + s_x1 + ',' + s_y2 + ')->(' + s_x2 + ',' + s_y2 + ')' );
     
     // go to point and down
     ABB.GO( s_x1, s_y1 );
@@ -75,7 +75,8 @@ function PATH( doc ) {
    * Draw path in Rapid Code.
    */
   this.draw = function () {
-    preOUT.println( '    ! path' );
+    ABB.COMMENT( 'path' );
+    cLog( 'path' );
     var i        = 0,
         x0       = 0,
         y0       = 0,
@@ -85,22 +86,22 @@ function PATH( doc ) {
     while ( i < this.vet.length ) {
       switch ( this.vet[ i ] ) {
         case 'm': // moveto
-          preOUT.println( '    ! m' );
+          ABB.COMMENT( 'm' );
           x0 = parseFloat( this.vet[ ++i ] );
           y0 = parseFloat( this.vet[ ++i ] );
           i++;
           lastX = x0;
           lastY = y0;
-          //console.log( 'm', x0, y0 );
+          cLog( 'm', x0, y0 );
           break;
         
         
         case 'l': // lineTo relative
-          preOUT.println( '    ! l' );
+          ABB.COMMENT( 'l' );
           var x = parseFloat( this.vet[ ++i ] ),
               y = parseFloat( this.vet[ ++i ] );
           if ( firstObj ) {
-            console.log( 'firstObj', firstObj );
+            cLog( 'firstObj', firstObj );
             firstObj = false;
             ABB.GO( x0, y0 );
             ABB.DOWN( x0, y0 );
@@ -109,7 +110,7 @@ function PATH( doc ) {
           lastY += y;
           ABB.MOVE( lastX, lastY );
           i++;
-          //console.log( 'l', lastX, lastY );
+          cLog( 'l', lastX, lastY );
           break;
         
         
@@ -120,7 +121,7 @@ function PATH( doc ) {
               y2 = parseFloat( this.vet[ ++i ] ),
               x3 = parseFloat( this.vet[ ++i ] ),
               y3 = parseFloat( this.vet[ ++i ] );
-          preOUT.println( '    ! c (' + x1 + ' ' + y1 + ') (' + x2 + ' ' + y2 + ') (' + x3 + ' ' + y3 + ')' );
+          ABB.COMMENT( 'c (' + x1 + ' ' + y1 + ') (' + x2 + ' ' + y2 + ') (' + x3 + ' ' + y3 + ')' );
           if ( firstObj ) {
             firstObj = false;
             ABB.GO( x0, y0 );
@@ -131,19 +132,19 @@ function PATH( doc ) {
           lastY += y3;
           ABB.MOVE( lastX, lastY );
           i++;
-          console.log( 'c', lastX, lastY );
+          cLog( 'c', lastX, lastY );
           break;
         
         
         case 'z': // closePath
-          preOUT.println( '    ! z' );
+          ABB.COMMENT( 'z' );
           ABB.MOVE( x0, y0 );
           ABB.UP( x0, y0 );
           i++;
-          console.log( 'z', x0, y0 );
+          cLog( 'z', x0, y0 );
           break;
         default:
-          console.log( 'default:', this.vet[ i ] );
+          cLog( 'default:', this.vet[ i ] );
           i++;
           break
       }
@@ -162,7 +163,7 @@ function ELLIPSE( doc ) {
    * Draw ellipse in Rapid Code.
    */
   this.draw = function () {
-    preOUT.println( '    ! ellipse' );
+    ABB.COMMENT( 'ellipse' );
   };
 }
 
@@ -174,6 +175,7 @@ function ELLIPSE( doc ) {
  * @constructor
  */
 function PARSE( doc ) {
+  cLog( '=== PARSE ===' );
   return new DrawInst( doc );
 }
 
@@ -195,15 +197,15 @@ function DFS( doc ) {
         } );
         break;
       case 'line':
-        //console.log( '--- line: ', c );
+        cLogElement2( '--- line: ', c );
         list.push( new LINE( c ) );
         break;
       case 'path':
-        //console.log( '--- path: ', c );
+        cLogElement2( '--- path: ', c );
         list.push( new PATH( c ) );
         break;
       case 'ellipse':
-        //console.log( '--- ellipse: ', c );
+        cLogElement2( '--- ellipse: ', c );
         list.push( new ELLIPSE( c ) );
         break;
       default:
@@ -221,11 +223,12 @@ function DFS( doc ) {
  * @constructor
  */
 function DRAW( drawInst, papel ) {
+  cLog( '=== DRAW ===' );
   preOUT.clear();
   SCALE.setRatio( drawInst.width, drawInst.height, papel.width, papel.height );
   ABB.header();
   _.each( drawInst.instructions, function ( elem ) {
-    //console.log( elem );
+    cLogElement( elem );
     elem.draw();
   } );
   ABB.footer();

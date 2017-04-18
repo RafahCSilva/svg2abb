@@ -35,7 +35,7 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmX: function ( Xpx ) {
-     return Math.round( this.ratioW * Xpx );
+    return Math.round( this.ratioW * Xpx );
     //return Math.round( this.Wmm - this.ratioW * Xpx );
   },
   /**
@@ -45,7 +45,7 @@ var SCALE = {
    * @return number (in mm)
    */
   px2mmY: function ( Ypx ) {
-     return Math.round( this.ratioH * Ypx );
+    return Math.round( this.ratioH * Ypx );
     //return Math.round( this.Hmm - this.ratioH * Ypx );
   },
 };
@@ -134,6 +134,36 @@ var ABB = {
     x = SCALE.px2mmX( x );
     y = SCALE.px2mmY( y );
     preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+  },
+  
+  /**
+   * Allow Comments in Rapid Code.
+   */
+  allowComment: false,
+  /**
+   * Enable Comments in Rapido Code.
+   */
+  enableComments: function () {
+    this.allowComment = true;
+  },
+  /**
+   * Disable Comments in Rapido Code.
+   */
+  disableComments: function () {
+    this.allowComment = false;
+  },
+  /**
+   * Comment in Rapid Code.
+   */
+  COMMENT: function () {
+    if ( this.allowComment ) {
+      var text = '';
+      for ( var i = 0; i < arguments.length; i++ ) {
+        text += arguments[ i ];
+        text += ' ';
+      }
+      preOUT.println( '    ! ' + text );
+    }
   },
 };
 

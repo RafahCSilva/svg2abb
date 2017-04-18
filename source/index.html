@@ -24,7 +24,10 @@
       </button>
 
       <!-- Branding Image -->
-      <a class="navbar-brand" href="#">SVG 2 ABB</a>
+      <a class="navbar-brand" href="#">
+        <i class="fa fa-file-picture-o" aria-hidden="true"></i>
+        SVG 2 ABB
+      </a>
     </div>
 
     <div class="collapse navbar-collapse" id="app_navbar_collapse">
@@ -47,11 +50,23 @@
 
 <div class="container container2">
 
+  <div class="alert alert-success" id="alert_msg" role="alert" style="display:none;"></div>
+
   <div class="row">
-    <div class="col-md-12 form-group text-right">
-      <button type="button" class="btn btn-success btn-block" id="btn_svg2abb">
-        SVG to ABB&nbsp;&nbsp;<i class="fa fa-arrow-right fa-lg"></i>
-      </button>
+    <div class="col-md-12 form-group">
+      <div class="btn-group btn-group-justified" role="group" aria-label="...">
+        <div class="btn-group" role="group" style="width: 100%;">
+          <button type="button" class="btn btn-success" id="btn_svg2abb">
+            SVG to ABB&nbsp;&nbsp;<i class="fa fa-arrow-right fa-lg"></i>
+          </button>
+        </div>
+        <div class="btn-group" role="group" style="width: 25%;">
+          <button type="button" class="btn btn-default" id="btn_copy"
+                  title="Copie o Rapid Code para a Área de Transferência">
+            <i class="fa fa-copy" aria-hidden="true"></i> Copiar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
