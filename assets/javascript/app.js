@@ -38,11 +38,70 @@ var preOUT = {
  */
 function getSvgFromFile() {
   var xhttp = new XMLHttpRequest();
-  xhttp.open( "GET", "assets/svg/tie-fighter.svg", false );
+  xhttp.open( "GET", "assets/svg/img_final.svg", false );
   xhttp.send();
   
   return xhttp.responseXML;
 }
+
+var MSG = {
+  alert_msg: $( '#alert_msg' ),
+  sucesso: function ( text ) {
+    this.alert_msg.attr( 'class', 'alert alert-success' );
+    this.alert_msg.html( '<i class="fa fa-check fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;' + text );
+    this.alert_msg.slideDown();
+    this.alert_msg.delay( 3000 ).slideUp();
+  },
+  erro: function ( text ) {
+    this.alert_msg.attr( 'class', 'alert alert-danger' );
+    this.alert_msg.html( '<i class="fa fa-exclamation-triangle fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;' + text );
+    this.alert_msg.slideDown();
+    this.alert_msg.delay( 3000 ).slideUp();
+  },
+};
+
+/**
+ * Allows Console Print message.
+ *
+ * @type {boolean}
+ */
+var allowLog = false;
+
+/**
+ * Print Element in Console.
+ *
+ * @param elem
+ */
+function cLogElement( elem ) {
+  if ( allowLog ) {
+    console.log( elem );
+  }
+}
+/**
+ * Print Element in Console.
+ *
+ * @param elem1
+ * @param elem2
+ */
+function cLogElement2( elem1, elem2 ) {
+  if ( allowLog ) {
+    console.log( elem1, elem2 );
+  }
+}
+
+/**
+ * Print Log in Console.
+ */
+function cLog() {
+  if ( allowLog ) {
+    var text = '';
+    for ( var i = 0; i < arguments.length; i++ ) {
+      text += arguments[ i ] + ' ';
+    }
+    console.log( text );
+  }
+}
+
 /**
  * ABB Rapid Code.
  *
@@ -57,6 +116,8 @@ function getSvgFromFile() {
 var SCALE = {
   ratioW: 1,
   ratioH: 1,
+  Wmm: 0,
+  Hmm: 0,
   /**
    * Set the calc Ratio to fill image in paper.
    *
@@ -66,6 +127,8 @@ var SCALE = {
    * @param Hmm (paper height in mm)
    */
   setRatio: function ( Wpx, Hpx, Wmm, Hmm ) {
+    this.Wmm    = Wmm;
+    this.Hmm    = Hmm;
     this.ratioW = Wmm / Wpx;  // (mm / px) * px = mm
     this.ratioH = Hmm / Hpx;
   },
@@ -77,6 +140,7 @@ var SCALE = {
    */
   px2mmX: function ( Xpx ) {
     return Math.round( this.ratioW * Xpx );
+    //return Math.round( this.Wmm - this.ratioW * Xpx );
   },
   /**
    * Scale transforme in Y axis.
@@ -86,6 +150,7 @@ var SCALE = {
    */
   px2mmY: function ( Ypx ) {
     return Math.round( this.ratioH * Ypx );
+    //return Math.round( this.Hmm - this.ratioH * Ypx );
   },
 };
 
@@ -119,7 +184,7 @@ var ABB = {
     preOUT.println( '  CONST robtarget p10:=[[759.02,-6.69,1122.48],[0.0668118,-0.0527993,0.994832,-0.0552913],[0,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
     preOUT.println( '  PROC main()' );
     
-    this.UP( 0, 0 );
+    preOUT.println( '    MoveL Offs( p10, 0, 0, ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code of program footer.
@@ -129,6 +194,18 @@ var ABB = {
     preOUT.println( 'ENDMODULE' );
   },
   /**
+   * Go at position upper.
+   *
+   * @param x (in mm)
+   * @param y (in mm)
+   * @constructor
+   */
+  GO: function ( x, y ) {
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+  },
+  /**
    * Print Code for lower a tool of paper.
    *
    * @param x (in mm)
@@ -136,8 +213,9 @@ var ABB = {
    * @constructor
    */
   DOWN: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code for lift a tool of paper.
@@ -146,7 +224,9 @@ var ABB = {
    * @param y (in mm)
    */
   UP: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
    * Print Code for move tool of paper.
@@ -155,7 +235,39 @@ var ABB = {
    * @param y (in mm)
    */
   MOVE: function ( x, y ) {
-    preOUT.println( '    MoveL Offs( p10, ' + x + ', ' + y + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+    x = SCALE.px2mmX( x );
+    y = SCALE.px2mmY( y );
+    preOUT.println( '    MoveL Offs( p10, ' + y + ', ' + x + ', ' + 0 + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
+  },
+  
+  /**
+   * Allow Comments in Rapid Code.
+   */
+  allowComment: false,
+  /**
+   * Enable Comments in Rapido Code.
+   */
+  enableComments: function () {
+    this.allowComment = true;
+  },
+  /**
+   * Disable Comments in Rapido Code.
+   */
+  disableComments: function () {
+    this.allowComment = false;
+  },
+  /**
+   * Comment in Rapid Code.
+   */
+  COMMENT: function () {
+    if ( this.allowComment ) {
+      var text = '';
+      for ( var i = 0; i < arguments.length; i++ ) {
+        text += arguments[ i ];
+        text += ' ';
+      }
+      preOUT.println( '    ! ' + text );
+    }
   },
 };
 
@@ -193,14 +305,14 @@ function LINE( doc ) {
    * Draw Line in Rapid Code.
    */
   this.draw = function () {
-    // scaling
-    var s_x1 = SCALE.px2mmX( this.x1 );
-    var s_y1 = SCALE.px2mmY( this.y1 );
-    var s_x2 = SCALE.px2mmX( this.x2 );
-    var s_y2 = SCALE.px2mmY( this.y2 );
-    preOUT.println( '    ! line (' + s_x1 + ',' + s_y2 + ')->(' + s_x2 + ',' + s_y2 + ')' );
+    var s_x1 = parseFloat( this.x1 );
+    var s_y1 = parseFloat( this.y1 );
+    var s_x2 = parseFloat( this.x2 );
+    var s_y2 = parseFloat( this.y2 );
+    ABB.COMMENT( 'line (' + s_x1 + ',' + s_y2 + ')->(' + s_x2 + ',' + s_y2 + ')' );
     
     // go to point and down
+    ABB.GO( s_x1, s_y1 );
     ABB.DOWN( s_x1, s_y1 );
     // Scribble
     ABB.MOVE( s_x2, s_y2 );
@@ -211,16 +323,106 @@ function LINE( doc ) {
 
 /**
  * Element Path.
- * @param doc
+ * https://www.w3.org/TR/SVG/paths.html
+ *
+ * @param doc (xml element)
  * @constructor
  */
 function PATH( doc ) {
-  this.d = doc.getAttribute( 'd' );
+  this.d   = doc.getAttribute( 'd' );
+  this.vet = this
+    .d
+    .replace( /(,)/g, ' ' )
+    .replace( /(m)/g, ' m ' )
+    .replace( /(M)/g, ' M ' )
+    .replace( /(c)/g, ' c ' )
+    .replace( /(C)/g, ' C ' )
+    .replace( /(l)/g, ' l ' )
+    .replace( /(L)/g, ' L ' )
+    .replace( /(z)/g, ' z ' )
+    .replace( /(Z)/g, ' Z ' )
+    .replace( /(\s+)/g, ' ' )
+    .trim()
+    .split( ' ' );
+  
   /**
    * Draw path in Rapid Code.
    */
   this.draw = function () {
-    preOUT.println( '    ! path' );
+    ABB.COMMENT( 'path' );
+    cLog( 'path' );
+    var i        = 0,
+        x0       = 0,
+        y0       = 0,
+        lastX    = 0,
+        lastY    = 0,
+        firstObj = true;
+    while ( i < this.vet.length ) {
+      switch ( this.vet[ i ] ) {
+        case 'm': // moveto
+          ABB.COMMENT( 'm' );
+          x0 = parseFloat( this.vet[ ++i ] );
+          y0 = parseFloat( this.vet[ ++i ] );
+          i++;
+          lastX = x0;
+          lastY = y0;
+          cLog( 'm', x0, y0 );
+          break;
+        
+        
+        case 'l': // lineTo relative
+          ABB.COMMENT( 'l' );
+          var x = parseFloat( this.vet[ ++i ] ),
+              y = parseFloat( this.vet[ ++i ] );
+          if ( firstObj ) {
+            cLog( 'firstObj', firstObj );
+            firstObj = false;
+            ABB.GO( x0, y0 );
+            ABB.DOWN( x0, y0 );
+          }
+          lastX += x;
+          lastY += y;
+          ABB.MOVE( lastX, lastY );
+          i++;
+          cLog( 'l', lastX, lastY );
+          break;
+        
+        
+        case 'c': // curve relative
+          var x1 = parseFloat( this.vet[ ++i ] ),
+              y1 = parseFloat( this.vet[ ++i ] ),
+              x2 = parseFloat( this.vet[ ++i ] ),
+              y2 = parseFloat( this.vet[ ++i ] ),
+              x3 = parseFloat( this.vet[ ++i ] ),
+              y3 = parseFloat( this.vet[ ++i ] );
+          ABB.COMMENT( 'c (' + x1 + ' ' + y1 + ') (' + x2 + ' ' + y2 + ') (' + x3 + ' ' + y3 + ')' );
+          if ( firstObj ) {
+            firstObj = false;
+            ABB.GO( x0, y0 );
+            ABB.DOWN( x0, y0 );
+          }
+          // line no lugar da curva
+          lastX += x3;
+          lastY += y3;
+          ABB.MOVE( lastX, lastY );
+          i++;
+          cLog( 'c', lastX, lastY );
+          break;
+        
+        
+        case 'z': // closePath
+          ABB.COMMENT( 'z' );
+          ABB.MOVE( x0, y0 );
+          ABB.UP( x0, y0 );
+          i++;
+          cLog( 'z', x0, y0 );
+          break;
+        default:
+          cLog( 'default:', this.vet[ i ] );
+          i++;
+          break
+      }
+    }
   };
 }
 
@@ -235,7 +437,7 @@ function ELLIPSE( doc ) {
    * Draw ellipse in Rapid Code.
    */
   this.draw = function () {
-    preOUT.println( '    ! ellipse' );
+    ABB.COMMENT( 'ellipse' );
   };
 }
 
@@ -247,6 +449,7 @@ function ELLIPSE( doc ) {
  * @constructor
  */
 function PARSE( doc ) {
+  cLog( '=== PARSE ===' );
   return new DrawInst( doc );
 }
 
@@ -268,15 +471,15 @@ function DFS( doc ) {
         } );
         break;
       case 'line':
-        //console.log( '--- line: ', c );
+        cLogElement2( '--- line: ', c );
         list.push( new LINE( c ) );
         break;
       case 'path':
-        //console.log( '--- path: ', c );
+        cLogElement2( '--- path: ', c );
         list.push( new PATH( c ) );
         break;
       case 'ellipse':
-        //console.log( '--- ellipse: ', c );
+        cLogElement2( '--- ellipse: ', c );
         list.push( new ELLIPSE( c ) );
         break;
       default:
@@ -294,32 +497,68 @@ function DFS( doc ) {
  * @constructor
  */
 function DRAW( drawInst, papel ) {
+  cLog( '=== DRAW ===' );
   preOUT.clear();
   SCALE.setRatio( drawInst.width, drawInst.height, papel.width, papel.height );
   ABB.header();
   _.each( drawInst.instructions, function ( elem ) {
-    //console.log( elem );
+    cLogElement( elem );
     elem.draw();
   } );
   ABB.footer();
 }
+
 /**
  * App launch.
  *
  * Created by RafahCSilva.
  */
 $( function () {
+  /// COMMENTS
+  //allowLog = true;
+  allowLog = false;
+  
+  //ABB.enableComments();
+  ABB.disableComments();
+  
+  // CONVERSION BUTTON
   $( '#btn_svg2abb' ).on( 'click', function () {
     var xmlDoc = getSvgFromFile();
     
     var image = PARSE( xmlDoc );
     
-    // Papel Sulfite A2 420 mm x 594 mm
+    // Papel Cartolina 660 mm x 500 mm
     var paperA2 = {
-      height: 420,
-      width: 594,
+      height: 500,
+      width: 660,
     };
     
     DRAW( image, paperA2 );
+  } );
+  
+  // COPY BUTTON
+  $( '#btn_copy' ).on( 'click', function () {
+    // http://stackoverflow.com/questions/1173194/select-all-div-text-with-single-mouse-click
+    var range, preOUT = document.getElementById( 'preOUT' );
+    
+    if ( document.selection ) {
+      range = document.body.createTextRange();
+      range.moveToElementText( preOUT );
+      range.select();
+    } else if ( window.getSelection ) {
+      range = document.createRange();
+      range.selectNode( preOUT );
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange( range );
+    } else {
+      MSG.erro( 'Não foi possivel Copiar o Código!' );
+      return;
+    }
+    
+    if ( document.execCommand( 'copy' ) ) {
+      MSG.sucesso( 'Código copiado com sucesso!' );
+    } else {
+      MSG.erro( 'Falha ao Copiar o Código!' );
+    }
   } );
 } );
