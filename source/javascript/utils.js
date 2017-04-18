@@ -38,7 +38,7 @@ var preOUT = {
  */
 function getSvgFromFile() {
   var xhttp = new XMLHttpRequest();
-  xhttp.open( "GET", "assets/svg/tie-fighter.svg", false );
+  xhttp.open( "GET", "assets/svg/trabalho.svg", false );
   xhttp.send();
   
   return xhttp.responseXML;
