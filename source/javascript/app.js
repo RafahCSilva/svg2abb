@@ -11,11 +11,23 @@ $( function () {
   //ABB.enableComments();
   ABB.disableComments();
   
+  // OPEN MODAL BUTTON
+  $( '#btn_modal_open' ).on( 'click', function () {
+    $( '#modal_svg2abb' ).modal( 'show' );
+  } );
+  
   // CONVERSION BUTTON
-  $( '#btn_svg2abb' ).on( 'click', function () {
-    var xmlDoc = getSvgFromFile();
+  $( '#modal_btn_svg2abb' ).on( 'click', function () {
     
-    var image = PARSE( xmlDoc );
+    var fileEscolhido1 = $( '#fileEscolhido1' );
+    var fileEscolhido2 = $( '#fileEscolhido2' );
+    var inputFile      = $( '#inputFile' );
+    var paperW         = $( '#paperW' );
+    var paperH         = $( '#paperH' );
+    var check_log      = $( '#check_log' );
+    var check_comment  = $( '#check_comment' );
+    
+    var xmlDoc = getSvgFromFile();
     
     // Papel Cartolina 660 mm x 500 mm
     var paperA2 = {
@@ -23,7 +35,11 @@ $( function () {
       width: 660,
     };
     
+    $( '#modal_svg2abb' ).modal( 'hide' );
+    
+    var image = PARSE( xmlDoc );
     DRAW( image, paperA2 );
+    
   } );
   
   // COPY BUTTON

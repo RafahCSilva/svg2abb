@@ -56,8 +56,11 @@
     <div class="col-md-12 form-group">
       <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group" style="width: 70%;">
-          <button type="button" class="btn btn-success" id="btn_svg2abb">
-            SVG to ABB&nbsp;&nbsp;<i class="fa fa-arrow-right fa-lg"></i>
+          <button type="button" class="btn btn-success" id="btn_modal_open" data-toggle="modal" href="#modal_svg2abb1">
+            SVG to ABB&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-file-image-o" aria-hidden="true"></i>
+            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            <i class="fa fa-file-code-o" aria-hidden="true"></i>
           </button>
         </div>
         <div class="btn-group" role="group" style="width: 30%;">
@@ -76,6 +79,91 @@
     </div>
   </div>
 
+</div>
+
+<div class="modal fade" id="modal_svg2abb">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <i class="fa fa-file-image-o" aria-hidden="true"></i>
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+          <i class="fa fa-file-code-o" aria-hidden="true"></i>
+          SVG to ABB Rapid Code
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-xs-12 form-group">
+            <label class="control-label">Image SVG:</label>
+            <div class="radio" style="margin-top: 0;">
+              <label>
+                <input type="radio" name="fileEscolhido" id="fileEscolhido1" value="1" checked>
+                SVG Example
+              </label>
+              <a class="btn btn-link" href="assets/svg/img_final.svg" role="button" target="_blank" style="padding-top: 0; padding-bottom: 0;">
+                see image <i class="fa fa-external-link" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="fileEscolhido" id="fileEscolhido2" value="2">
+                Other SVG File:
+                <input type="file" class="form-control-file" name="" id="inputFile" placeholder="" aria-describedby="fileHelpId">
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-lg-8 form-group">
+            <label class="control-label">
+              Paper Sizes in millimeters (width &times; height):
+            </label>
+            <div class="input-group">
+              <input type="text" id="paperW" class="form-control" value="660" title="" required placeholder="width">
+              <div class="input-group-addon">mm</div>
+              <div class="input-group-addon">&times;</div>
+              <input type="text" id="paperH" class="form-control" value="500" title="" required placeholder="height">
+              <div class="input-group-addon">mm</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12">
+            <label class="control-label">
+              Optional Logs:
+            </label>
+            <div class="checkbox" style="margin-top: 0;">
+              <label>
+                <input type="checkbox" checked id="check_log"> Console Log
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" checked id="check_comment"> Rapid Code Comments
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg pull-left" data-dismiss="modal">
+          <i class="fa fa-ban" aria-hidden="true"></i>
+          Close
+        </button>
+        <button type="button" class="btn btn-primary btn-lg" id="modal_btn_svg2abb">
+          &nbsp;&nbsp; Convert &nbsp;&nbsp;
+          <i class="fa fa-file-image-o" aria-hidden="true"></i>&nbsp;
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>&nbsp;
+          <i class="fa fa-file-code-o" aria-hidden="true"></i>&nbsp;&nbsp;
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade in" id="modal_sobre">
