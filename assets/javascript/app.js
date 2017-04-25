@@ -32,17 +32,57 @@ var preOUT = {
 };
 
 /**
- * load svg file like xml.
+ * load svg file like xml from server.
  *
- * @return Document
+ * @param {string} link
+ * @return {Document}
  */
-function getSvgFromFile() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.open( "GET", "assets/svg/img_final.svg", false );
-  xhttp.send();
+function getSvgFromServer( link ) {
+  var xHttp = new XMLHttpRequest();
+  xHttp.open( "GET", link, false );
+  xHttp.send();
   
-  return xhttp.responseXML;
+  return xHttp.responseXML;
 }
+
+/**
+ * load svg file like xml from file input.
+ */
+var SVG_FROM_FILE;
+$( function () {
+  // Check for the various File API support.
+  if ( !window.File && !window.FileReader && !window.FileList && !window.Blob ) {
+    alert( 'The File APIs are not fully supported in this browser.' );
+    return null;
+  }
+  
+  var reader;
+  function handleFileSelect( evt ) {
+    reader             = new FileReader();
+    reader.onerror     = function ( evt ) {
+      switch ( evt.target.error.code ) {
+        case evt.target.error.NOT_FOUND_ERR:
+          alert( 'File Not Found!' );
+          break;
+        case evt.target.error.NOT_READABLE_ERR:
+          alert( 'File is not readable' );
+          break;
+        case evt.target.error.ABORT_ERR:
+          break; // noop
+        default:
+          alert( 'An error occurred reading this file.' );
+      }
+    };
+    reader.onload      = function ( e ) {
+      SVG_FROM_FILE = (new DOMParser()).parseFromString( e.target.result, "image/svg+xml" );
+    };
+    
+    // Read in the image file as a binary string.
+    reader.readAsBinaryString( evt.target.files[ 0 ] );
+  }
+  
+  document.getElementById( 'inputFile' ).addEventListener( 'change', handleFileSelect, false );
+} );
 
 var MSG = {
   alert_msg: $( '#alert_msg' ),
@@ -77,6 +117,7 @@ function cLogElement( elem ) {
     console.log( elem );
   }
 }
+
 /**
  * Print Element in Console.
  *
@@ -246,15 +287,11 @@ var ABB = {
   allowComment: false,
   /**
    * Enable Comments in Rapido Code.
+   *
+   * @param {boolean} val
    */
-  enableComments: function () {
-    this.allowComment = true;
-  },
-  /**
-   * Disable Comments in Rapido Code.
-   */
-  disableComments: function () {
-    this.allowComment = false;
+  enableComments: function ( val ) {
+    this.allowComment = val;
   },
   /**
    * Comment in Rapid Code.
@@ -514,25 +551,50 @@ function DRAW( drawInst, papel ) {
  * Created by RafahCSilva.
  */
 $( function () {
-  /// COMMENTS
-  //allowLog = true;
-  allowLog = false;
-  
-  //ABB.enableComments();
-  ABB.disableComments();
+  // OPEN MODAL BUTTON
+  $( '#btn_modal_open' ).on( 'click', function () {
+    $( '#modal_svg2abb' ).modal( 'show' );
+  } );
   
   // CONVERSION BUTTON
-  $( '#btn_svg2abb' ).on( 'click', function () {
-    var xmlDoc = getSvgFromFile();
+  $( '#modal_btn_svg2abb' ).on( 'click', function () {
     
-    var image = PARSE( xmlDoc );
+    var fileEscolhido1 = $( '#fileEscolhido1' );
+    var fileEscolhido2 = $( '#fileEscolhido2' );
+    var inputFile      = $( '#inputFile' );
+    var paperW         = $( '#paperW' );
+    var paperH         = $( '#paperH' );
+    var check_log      = $( '#check_log' );
+    var check_comment  = $( '#check_comment' );
+    
+    /// COMMENTS
+    allowLog = check_log.is( ':checked' );
+    ABB.enableComments( check_comment.is( ':checked' ) );
     
     // Papel Cartolina 660 mm x 500 mm
-    var paperA2 = {
-      height: 500,
-      width: 660,
-    };
+    var w       = paperW.val(),
+        h       = paperH.val(),
+        paperA2 = {
+          height: w == '' ? 500 : h,
+          width: w == '' ? 660 : w,
+        };
     
+    var xmlDoc;
+    if ( fileEscolhido1.is( ':checked' ) ) {
+      xmlDoc = getSvgFromServer( 'assets/svg/img_example.svg' );
+    } else if ( fileEscolhido2.is( ':checked' ) ) {
+      if ( !SVG_FROM_FILE ) {
+        return;
+      }
+      xmlDoc = SVG_FROM_FILE;
+      
+    } else {
+      return;
+    }
+    
+    $( '#modal_svg2abb' ).modal( 'hide' );
+    
+    var image = PARSE( xmlDoc );
     DRAW( image, paperA2 );
   } );
   
@@ -561,4 +623,5 @@ $( function () {
       MSG.erro( 'Falha ao Copiar o Código!' );
     }
   } );
+  $( '[data-toggle="tooltip"]' ).tooltip( { trigger: 'hover' } );
 } );
