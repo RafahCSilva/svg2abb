@@ -40,7 +40,7 @@
         </li>
         <li>
           <a data-toggle="modal" data-target="#modal_sobre" href="#">
-            <i class="fa fa-info-circle"></i> Sobre
+            <i class="fa fa-info-circle"></i> About
           </a>
         </li>
       </ul>
@@ -56,7 +56,8 @@
     <div class="col-md-12 form-group">
       <div class="btn-group btn-group-justified" role="group" aria-label="...">
         <div class="btn-group" role="group" style="width: 70%;">
-          <button type="button" class="btn btn-success" id="btn_modal_open" data-toggle="modal" href="#modal_svg2abb1">
+          <button type="button" class="btn btn-success btn-lg" id="btn_modal_open"
+                  title="Convert SVG to Rapid Code" data-toggle="tooltip">
             SVG to ABB&nbsp;&nbsp;&nbsp;
             <i class="fa fa-file-image-o" aria-hidden="true"></i>
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -64,9 +65,9 @@
           </button>
         </div>
         <div class="btn-group" role="group" style="width: 30%;">
-          <button type="button" class="btn btn-default" id="btn_copy"
-                  title="Copie o Rapid Code para a Área de Transferência">
-            <i class="fa fa-copy" aria-hidden="true"></i> Copiar
+          <button type="button" class="btn btn-default btn-lg" id="btn_copy"
+                  title="Copy the Rapid Code to Clipboard" data-toggle="tooltip">
+            <i class="fa fa-copy" aria-hidden="true"></i> Copy
           </button>
         </div>
       </div>
@@ -103,7 +104,7 @@
                 <input type="radio" name="fileEscolhido" id="fileEscolhido1" value="1" checked>
                 SVG Example
               </label>
-              <a class="btn btn-link" href="assets/svg/img_final.svg" role="button" target="_blank" style="padding-top: 0; padding-bottom: 0;">
+              <a class="btn btn-link" href="assets/svg/img_example.svg" role="button" target="_blank" style="padding-top: 0; padding-bottom: 0;">
                 see image <i class="fa fa-external-link" aria-hidden="true"></i>
               </a>
             </div>
@@ -138,12 +139,12 @@
             </label>
             <div class="checkbox" style="margin-top: 0;">
               <label>
-                <input type="checkbox" checked id="check_log"> Console Log
+                <input type="checkbox" id="check_log"> Console Log
               </label>
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" checked id="check_comment"> Rapid Code Comments
+                <input type="checkbox" id="check_comment"> Rapid Code Comments
               </label>
             </div>
           </div>
@@ -153,7 +154,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default btn-lg pull-left" data-dismiss="modal">
           <i class="fa fa-ban" aria-hidden="true"></i>
-          Close
+          Cancel
         </button>
         <button type="button" class="btn btn-primary btn-lg" id="modal_btn_svg2abb">
           &nbsp;&nbsp; Convert &nbsp;&nbsp;
@@ -172,11 +173,11 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">
-          <i class="fa fa-info-circle fa-lg"></i> Sobre este Projeto
+          <i class="fa fa-info-circle fa-lg"></i> About this project
         </h4>
       </div>
       <div class="modal-body">
-        Desenvolvido por:
+        Developed by:
         <ul>
           <li>
             Rafael Cardoso da Silva
@@ -190,7 +191,7 @@
         </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">FECHAR</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
       </div>
     </div>
   </div>

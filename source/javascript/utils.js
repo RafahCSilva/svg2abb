@@ -32,17 +32,57 @@ var preOUT = {
 };
 
 /**
- * load svg file like xml.
+ * load svg file like xml from server.
  *
- * @return Document
+ * @param {string} link
+ * @return {Document}
  */
-function getSvgFromFile() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.open( "GET", "assets/svg/img_final.svg", false );
-  xhttp.send();
+function getSvgFromServer( link ) {
+  var xHttp = new XMLHttpRequest();
+  xHttp.open( "GET", link, false );
+  xHttp.send();
   
-  return xhttp.responseXML;
+  return xHttp.responseXML;
 }
+
+/**
+ * load svg file like xml from file input.
+ */
+var SVG_FROM_FILE;
+$( function () {
+  // Check for the various File API support.
+  if ( !window.File && !window.FileReader && !window.FileList && !window.Blob ) {
+    alert( 'The File APIs are not fully supported in this browser.' );
+    return null;
+  }
+  
+  var reader;
+  function handleFileSelect( evt ) {
+    reader             = new FileReader();
+    reader.onerror     = function ( evt ) {
+      switch ( evt.target.error.code ) {
+        case evt.target.error.NOT_FOUND_ERR:
+          alert( 'File Not Found!' );
+          break;
+        case evt.target.error.NOT_READABLE_ERR:
+          alert( 'File is not readable' );
+          break;
+        case evt.target.error.ABORT_ERR:
+          break; // noop
+        default:
+          alert( 'An error occurred reading this file.' );
+      }
+    };
+    reader.onload      = function ( e ) {
+      SVG_FROM_FILE = (new DOMParser()).parseFromString( e.target.result, "image/svg+xml" );
+    };
+    
+    // Read in the image file as a binary string.
+    reader.readAsBinaryString( evt.target.files[ 0 ] );
+  }
+  
+  document.getElementById( 'inputFile' ).addEventListener( 'change', handleFileSelect, false );
+} );
 
 var MSG = {
   alert_msg: $( '#alert_msg' ),
@@ -77,6 +117,7 @@ function cLogElement( elem ) {
     console.log( elem );
   }
 }
+
 /**
  * Print Element in Console.
  *

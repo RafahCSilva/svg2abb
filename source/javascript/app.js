@@ -4,13 +4,6 @@
  * Created by RafahCSilva.
  */
 $( function () {
-  /// COMMENTS
-  //allowLog = true;
-  allowLog = false;
-  
-  //ABB.enableComments();
-  ABB.disableComments();
-  
   // OPEN MODAL BUTTON
   $( '#btn_modal_open' ).on( 'click', function () {
     $( '#modal_svg2abb' ).modal( 'show' );
@@ -27,19 +20,35 @@ $( function () {
     var check_log      = $( '#check_log' );
     var check_comment  = $( '#check_comment' );
     
-    var xmlDoc = getSvgFromFile();
+    /// COMMENTS
+    allowLog = check_log.is( ':checked' );
+    ABB.enableComments( check_comment.is( ':checked' ) );
     
     // Papel Cartolina 660 mm x 500 mm
-    var paperA2 = {
-      height: 500,
-      width: 660,
-    };
+    var w       = paperW.val(),
+        h       = paperH.val(),
+        paperA2 = {
+          height: w == '' ? 500 : h,
+          width: w == '' ? 660 : w,
+        };
+    
+    var xmlDoc;
+    if ( fileEscolhido1.is( ':checked' ) ) {
+      xmlDoc = getSvgFromServer( 'assets/svg/img_example.svg' );
+    } else if ( fileEscolhido2.is( ':checked' ) ) {
+      if ( !SVG_FROM_FILE ) {
+        return;
+      }
+      xmlDoc = SVG_FROM_FILE;
+      
+    } else {
+      return;
+    }
     
     $( '#modal_svg2abb' ).modal( 'hide' );
     
     var image = PARSE( xmlDoc );
     DRAW( image, paperA2 );
-    
   } );
   
   // COPY BUTTON
@@ -67,4 +76,5 @@ $( function () {
       MSG.erro( 'Falha ao Copiar o Código!' );
     }
   } );
+  $( '[data-toggle="tooltip"]' ).tooltip( { trigger: 'hover' } );
 } );

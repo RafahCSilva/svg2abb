@@ -142,15 +142,11 @@ var ABB = {
   allowComment: false,
   /**
    * Enable Comments in Rapido Code.
+   *
+   * @param {boolean} val
    */
-  enableComments: function () {
-    this.allowComment = true;
-  },
-  /**
-   * Disable Comments in Rapido Code.
-   */
-  disableComments: function () {
-    this.allowComment = false;
+  enableComments: function ( val ) {
+    this.allowComment = val;
   },
   /**
    * Comment in Rapid Code.
