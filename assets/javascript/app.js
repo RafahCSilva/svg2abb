@@ -208,8 +208,8 @@ var ABB = {
    
    */
   
-  // Height away from paper d(50 mm = 5 cm).
-  zUP: 50,
+  // Height away from paper d(25 mm = 2.5 cm).
+  zUP: 25,
   // Velocity of moves (10 mm/s).
   v: 'v10',
   // Precision zone.
@@ -222,9 +222,10 @@ var ABB = {
    */
   header: function () {
     preOUT.println( 'MODULE MainModule' );
-    preOUT.println( '  CONST robtarget p10:=[[759.02,-6.69,1122.48],[0.0668118,-0.0527993,0.994832,-0.0552913],[0,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
+    preOUT.println( '  CONST robtarget p10:=[[670.26,0.00,458.79],[0.0459441,3.72136E-09,0.998944,1.71155E-10],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
     preOUT.println( '  PROC main()' );
     
+    preOUT.println( '    MoveJ p10, ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
     preOUT.println( '    MoveL Offs( p10, 0, 0, ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
@@ -450,9 +451,10 @@ function PATH( doc ) {
         case 'z': // closePath
           ABB.COMMENT( 'z' );
           ABB.MOVE( x0, y0 );
-          ABB.UP( x0, y0 );
-          i++;
           cLog( 'z', x0, y0 );
+          lastX = x0;
+          lastY = y0;
+          i++;
           break;
         default:
           cLog( 'default:', this.vet[ i ] );
@@ -460,6 +462,10 @@ function PATH( doc ) {
           break
       }
     }
+    // UP on final path draw
+    ABB.UP( lastX, lastY );
+    cLog( 'up', lastX, lastY );
+    ABB.COMMENT( 'up ( ' + lastX + ' ' + lastY + ' )' );
   };
 }
 
