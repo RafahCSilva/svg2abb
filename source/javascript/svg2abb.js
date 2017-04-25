@@ -139,9 +139,10 @@ function PATH( doc ) {
         case 'z': // closePath
           ABB.COMMENT( 'z' );
           ABB.MOVE( x0, y0 );
-          ABB.UP( x0, y0 );
-          i++;
           cLog( 'z', x0, y0 );
+          lastX = x0;
+          lastY = y0;
+          i++;
           break;
         default:
           cLog( 'default:', this.vet[ i ] );
@@ -149,6 +150,10 @@ function PATH( doc ) {
           break
       }
     }
+    // UP on final path draw
+    ABB.UP( lastX, lastY );
+    cLog( 'up', lastX, lastY );
+    ABB.COMMENT( 'up ( ' + lastX + ' ' + lastY + ' )' );
   };
 }
 

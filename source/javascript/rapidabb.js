@@ -63,8 +63,8 @@ var ABB = {
    
    */
   
-  // Height away from paper d(50 mm = 5 cm).
-  zUP: 50,
+  // Height away from paper d(25 mm = 2.5 cm).
+  zUP: 25,
   // Velocity of moves (10 mm/s).
   v: 'v10',
   // Precision zone.
