@@ -77,9 +77,10 @@ var ABB = {
    */
   header: function () {
     preOUT.println( 'MODULE MainModule' );
-    preOUT.println( '  CONST robtarget p10:=[[759.02,-6.69,1122.48],[0.0668118,-0.0527993,0.994832,-0.0552913],[0,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
+    preOUT.println( '  CONST robtarget p10:=[[670.26,0.00,458.79],[0.0459441,3.72136E-09,0.998944,1.71155E-10],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];' );
     preOUT.println( '  PROC main()' );
     
+    preOUT.println( '    MoveJ p10, ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
     preOUT.println( '    MoveL Offs( p10, 0, 0, ' + this.zUP + ' ), ' + this.v + ', ' + this.z + ', ' + this.tool + ';' );
   },
   /**
